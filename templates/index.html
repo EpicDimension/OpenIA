@@ -1,0 +1,36 @@
+<center>
+    <textarea cols=128 rows=32 id="article"></textarea>
+</center>
+<script>
+    const article = document.getElementById("article");
+    document.onload = article.focus();
+
+    function sendMessage() {
+        const text = article.value;
+
+        fetch("/gpt3", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }, body: JSON.stringify({
+                message: text })
+        }).then(response => {
+            return response.json();
+        }).then(responseText => {
+            bar = responseText
+            article.value += bar[0];
+            article.style.background = ""
+            article.readOnly = false;
+        })
+    }
+
+    document.addEventListener("keypress", event => {
+        if ((event.keyCode == 10 ||
+        event.keyCode == 13) && event.ctrlKey) {
+            article.style.background = "#ddd"
+            article.readOnly = true;
+            event.preventDefault();
+            sendMessage();
+        }
+    })
+</script>
